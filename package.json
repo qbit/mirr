@@ -1,0 +1,22 @@
+{
+  "name": "mirr",
+  "version": "0.0.1",
+  "private": true,
+  "dependencies": {
+    "express": "2.4.7",
+    "ejs": ">= 0.0.1",
+    "sqlite": "~1.0.4",
+    "jsftp": "~0.2.0",
+    "connect-form": "~0.2.1",
+    "notifo": "0.0.2"
+  },
+  "devDependencies": {},
+  "engines": {
+    "node": "~0.4.12"
+  },
+  "author": "Aaron Bieber <qbit@deftly.net> (http://www.deftly.net)",
+  "description": "OpenBSD smart mirror",
+  "repository": {
+    "url": ""
+  }
+}
