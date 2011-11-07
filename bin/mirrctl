@@ -1,0 +1,29 @@
+#!/usr/bin/env coffee
+
+Optparse = require 'optparse'
+MirrFtp = require '../lib/ftp'
+Mirr = require '../lib/mirr'
+
+mirr = new Mirr.Mirr( )
+
+Switches = [
+  [ "-h", "--help",     "Display help info" ],
+  [ "-a", "--add",      "Add a mirror to monitor" ],
+  [ "-d", "--delete",   "Remove a mirror ( and all associated data )" ],
+  [ "-l", "--list",     "List mirrors" ],
+  [ "-v", "--version",     "Version" ]
+]
+
+Parser = new Optparse.OptionParser( Switches )
+Parser.banner = "Usage mirrctl [options]"
+
+Parser.on 'help', ( opt, val ) ->
+  console.log Parser.toString()
+  process.exit 0
+
+Parser.on 'version', ( opt, val ) ->
+  console.log "Version: #{mirr.version}"
+  process.exit 0
+
+Parser.parse process.ARGV
+# vim:ft=coffee ts=2 sw=2 et :
