@@ -46,6 +46,7 @@ App.get '/', ( req, res ) ->
       o =
         release: m
         url: list[m].url
+        schedule: list[m].schedule
         arch: list[m].arch
         packages: list[m].packages
         lastupdate: list[m].lastupdate
