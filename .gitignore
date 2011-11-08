@@ -1,4 +1,4 @@
-db/
+db/mirr.json
 public/pub
 node_modules
 .*.swp
