@@ -2,13 +2,8 @@
 
 <div id="add_dialog">
 	<form id="create_mirror">
-		<label for="add_sel">Select a version:</label>
+		<label for="add_sel">Select a release:</label>
 		<select id="add_sel" name="add_sel">
-			<% if ( mirrors.length) { %>
-			    <% mirrors.forEach(function(m){ %>
-			      <option value="<%= m.url %>"><%= m.name %></option>
-			    <% }) %>
-			<% } %>
 		</select>
 		<br />
 		<input id="packages" type="checkbox" value="packages" name="packages" checked="checked"></input>
@@ -27,22 +22,18 @@
 	<table id="mirrors_table">
 		<thead>
 		<tr>
-			<th>ID</th>
-			<th>Version</th>
+			<th>Release</th>
 			<th>URL</th>
 			<th>Last Checked</th>
-			<th>Next Update</th>
 			<th>Active</th>
 		</tr>
 	</thead>
-		<% if ( curr_mirr.length ) { %>
+		<% if ( curr_mirr ) { %>
 			<% curr_mirr.forEach( function( l ) { %>
 			<tr>
-				<td><%= l.id %></td>
-				<td><%= l.version %></td>
+				<td><%= l.release %></td>
 				<td><%= l.url %></td>
-				<td><%= l.last_update %></td>
-				<td><%= l.next_check %></td>
+				<td><%= l.lastupdate %></td>
 				<td><%= l.active %></td>
 			</tr>
 			<% }) %>
@@ -50,10 +41,9 @@
 		<tfoot>
 		<tr>
 			<th>ID</th>
-			<th>Version</th>
+			<th>Release</th>
 			<th>URL</th>
 			<th>Last Checked</th>
-			<th>Next Update</th>
 			<th>Active</th>
 		</tr>
 	</tfoot>

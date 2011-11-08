@@ -1,7 +1,6 @@
 #!/usr/bin/env coffee
 
 Optparse = require 'optparse'
-MirrFtp = require '../lib/ftp'
 Mirr = require '../lib/mirr'
 
 mirr = new Mirr.Mirr( )

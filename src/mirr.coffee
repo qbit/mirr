@@ -49,7 +49,7 @@ class Mirr
 		return output
 
 	dump: ( fn ) ->
-		return Fs.readFile @config, ( err, data ) ->
+		Fs.readFile @config, ( err, data ) ->
 			fn( err, data )
 
 	rand: ( max ) ->

@@ -1,5 +1,59 @@
 #!/usr/bin/env coffee
 
+Optparse = require 'optparse'
+MirrFtp = require '../lib/ftp'
+Mirr = require '../lib/mirr'
+Express = require 'express'
+App = Express.createServer()
 
+mirr = new Mirr.Mirr()
+
+App.configure ->
+  App.set 'view engine', 'ejs'
+  App.use( Express.bodyParser() )
+  App.use( Express.static( "#{__dirname}/public" ))
+  App.use( Express.errorHandler( { dumpExceptions: false, showStack: false } ))
+
+Options =
+  port: 1337
+
+
+Switches = [
+  [ "-h", "--help",     "Display help info." ],
+  [ "-p", "--port PORT",     "Port number to run the web server on. ( default 1337 )" ]
+  [ "-n", "--noserver", "Disable webserver entirely. This will require another server." ]
+]
+
+Parser = new Optparse.OptionParser( Switches )
+Parser.banner = "Usage mirr [options]"
+
+Parser.on 'help', ( opt, val ) ->
+  console.log Parser.toString()
+  process.exit 0
+
+Parser.on 'port', ( opt, val ) ->
+  Options.port = val
+
+
+Parser.parse process.ARGV
+
+App.get '/', ( req, res ) ->
+  mirr.dump ( err, list ) ->
+    list = JSON.parse list.toString()
+    mirrors = []
+    for m of list
+      o =
+        release: m
+        url: list[m].url
+        arch: list[m].arch
+        packages: list[m].packages
+        lastupdate: list[m].lastupdate
+        active: list[m].active
+
+      mirrors.push o
+        
+    res.render 'index', { curr_mirr: mirrors, title: 'Mirr' }
+
+App.listen( Options.port )
 
 # vim:ft=coffee ts=2 sw=2 et :
