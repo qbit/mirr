@@ -9,8 +9,8 @@
     "notifo": "0.0.2",
     "cron": "~0.1.3",
     "nconf": "~0.4.4",
-	"colors": "~0.5.1",
-	"cli-table": "~0.0.1"
+    "colors": "~0.5.1",
+    "cli-table": "~0.0.1"
   },
   "devDependencies": {},
   "engines": {
