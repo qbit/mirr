@@ -25,5 +25,11 @@ Parser.on 'version', ( opt, val ) ->
   console.log "Version: #{mirr.version}"
   process.exit 0
 
+Parser.on 'list', ( opt, val ) ->
+  mirr.dump ( err, data ) ->
+    # console.log data.toString()
+    console.log mirr.pretty( data )
+    process.exit 0
+
 Parser.parse process.ARGV
 # vim:ft=coffee ts=2 sw=2 et :
