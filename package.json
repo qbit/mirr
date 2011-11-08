@@ -10,6 +10,7 @@
     "cron": "~0.1.3",
     "nconf": "~0.4.4",
     "colors": "~0.5.1",
+    "optparse": "~1.0.3",
     "cli-table": "~0.0.1"
   },
   "devDependencies": {},
