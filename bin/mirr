@@ -8,7 +8,6 @@ App = Express.createServer()
 
 mirr = new Mirr.Mirr()
 
-console.log "#{__dirname}/public"
 App.configure ->
   App.set 'view engine', 'ejs'
   App.use( Express.bodyParser() )
