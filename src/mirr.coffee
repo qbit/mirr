@@ -1,6 +1,7 @@
 Nconf = require 'nconf'
 Fs = require 'fs'
 Colors = require 'colors'
+Table = require 'cli-table'
 
 class Mirr
 	constructor: ( ) ->

@@ -26,8 +26,8 @@ Parser.on 'version', ( opt, val ) ->
 
 Parser.on 'list', ( opt, val ) ->
   mirr.dump ( err, data ) ->
-    # console.log data.toString()
-    console.log mirr.pretty( data )
+    table = mirr.pretty( data )
+    console.log table.toString()
     process.exit 0
 
 Parser.on 'delete', ( opt, value ) ->
