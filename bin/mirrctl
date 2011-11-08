@@ -8,8 +8,8 @@ mirr = new Mirr.Mirr( )
 
 Switches = [
   [ "-h", "--help",     "Display help info" ],
-  [ "-a", "--add",      "Add a mirror to monitor" ],
-  [ "-d", "--delete",   "Remove a mirror ( and all associated data )" ],
+  [ "-a", "--add STRING",      "Add a mirror to monitor. Example '-a 5.0:ftp.openbsd.org:i386,amd64:true:true'" ],
+  [ "-d", "--delete RELEASE",   "Remove a mirror ( and all associated data )" ],
   [ "-l", "--list",     "List mirrors" ],
   [ "-v", "--version",     "Version" ]
 ]
@@ -30,6 +30,14 @@ Parser.on 'list', ( opt, val ) ->
     # console.log data.toString()
     console.log mirr.pretty( data )
     process.exit 0
+
+Parser.on 'delete', ( opt, value ) ->
+  mirr.rm value
+  process.exit 0
+
+Parser.on 'add', ( opt, value ) ->
+  mirr.add value
+  process.exit 0
 
 Parser.parse process.ARGV
 # vim:ft=coffee ts=2 sw=2 et :
