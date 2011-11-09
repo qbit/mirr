@@ -12,7 +12,7 @@ class Mirr
 
 	_save: ->
 		@nconf.save ( err ) =>
-			Fs.readFile @config, ( err, data ) =>
+		Fs.readFile @config, ( err, data ) =>
 				console.dir JSON.parse data.toString()
 
 	_set: ( key, val ) ->
@@ -70,3 +70,5 @@ class Mirr
 		return Math.floor( Math.random() * max )
 
 exports.Mirr = Mirr
+
+# vim:ft=coffee ts=2 sw=2 et :

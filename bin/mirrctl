@@ -3,7 +3,7 @@
 Optparse = require 'optparse'
 Mirr = require '../lib/mirr'
 
-mirr = new Mirr.Mirr( )
+mirr = new Mirr.Mirr()
 
 Switches = [
   [ "-h", "--help",     "Display help info" ],

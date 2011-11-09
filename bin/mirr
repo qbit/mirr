@@ -3,10 +3,11 @@
 Optparse = require 'optparse'
 MirrFtp = require '../lib/ftp'
 Mirr = require '../lib/mirr'
+Cron = require 'cron'
 Express = require 'express'
 App = Express.createServer()
 
-mirr = new Mirr.Mirr()
+mirr = new Mirr.Mirr( )
 
 App.configure ->
   App.set 'view engine', 'ejs'
@@ -33,7 +34,6 @@ Parser.on 'help', ( opt, val ) ->
 
 Parser.on 'port', ( opt, val ) ->
   Options.port = val
-
 
 Parser.parse process.ARGV
 
