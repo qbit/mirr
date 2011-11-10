@@ -35,7 +35,7 @@ Parser.on 'help', ( opt, val ) ->
 Parser.on 'port', ( opt, val ) ->
   Options.port = val
 
-Parser.parse process.ARGV
+Parser.parse process.argv
 
 App.get '/', ( req, res ) ->
   mirr.dump ( err, list ) ->

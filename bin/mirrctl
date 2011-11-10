@@ -38,5 +38,5 @@ Parser.on 'add', ( opt, value ) ->
   mirr.add value
   process.exit 0
 
-Parser.parse process.ARGV
+Parser.parse process.argv
 # vim:ft=coffee ts=2 sw=2 et :
