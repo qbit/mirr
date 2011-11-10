@@ -10,6 +10,9 @@ class Mirr
 		@nconf = Nconf
 		@nconf.add 'file', { file: @config }
 
+  log: ( msg ) ->
+    console.log msg
+
 	_save: ->
 		@nconf.save ( err ) =>
 		Fs.readFile @config, ( err, data ) =>

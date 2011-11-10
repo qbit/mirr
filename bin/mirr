@@ -18,6 +18,7 @@ App.configure ->
 Options =
   port: 1337
 
+Jobs = []
 
 Switches = [
   [ "-h", "--help",     "Display help info." ],
@@ -36,6 +37,15 @@ Parser.on 'port', ( opt, val ) ->
   Options.port = val
 
 Parser.parse process.argv
+
+mirr.dump ( err, list ) ->
+  list = JSON.parse list.toString()
+  for m of list
+    j = new Cron.CronJob list[m].schedule.replace( /,/, ' ' ), ( ) ->
+      console.log "Updating #{this.jobName}"
+    j.jobName = m
+    j.jobInfo = list[m]
+    Jobs.push j
 
 App.get '/', ( req, res ) ->
   mirr.dump ( err, list ) ->
