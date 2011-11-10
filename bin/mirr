@@ -36,7 +36,7 @@ Parser.on 'help', ( opt, val ) ->
 Parser.on 'port', ( opt, val ) ->
   Options.port = val
 
-Parser.parse process.argv
+Parser.parse process.argv or process.ARGV
 
 mirr.dump ( err, list ) ->
   list = JSON.parse list.toString()
