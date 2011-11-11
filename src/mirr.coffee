@@ -25,7 +25,7 @@ class Mirr
 		parts = str.split ':'
 		arch = parts[2].split ','
 
-		@_set "#{parts[0]}:url", parts[1]
+		@_set "#{parts[0]}:server", parts[1]
 		@_set "#{parts[0]}:arch", arch
 		@_set "#{parts[0]}:packages", parts[3]
 		@_set "#{parts[0]}:lastupdate", 'never'
@@ -43,7 +43,7 @@ class Mirr
 
 	pretty: ( obj ) ->
 		head =
-			[ 'Release', 'URL', 'Sched', 'Arch(es)', 'Packages', 'Updated', 'Active' ]
+			[ 'Release', 'Server', 'Sched', 'Arch(es)', 'Packages', 'Updated', 'Active' ]
 
 		colWidths=
 		 	[ 16, 21, 15, 25, 10, 10, 10 ]
@@ -53,14 +53,14 @@ class Mirr
 		obj = JSON.parse obj.toString()
 		for ver of obj
 
-			url = obj[ver].url
+			server = obj[ver].server
 			arch = obj[ver].arch.join( ',' )
 			sch = obj[ver].schedule
 			pkgs = obj[ver].packages
 			last = obj[ver].lastupdate
 			active = obj[ver].active
 
-			table.push [ ver, url, sch, arch, pkgs, last, active ]
+			table.push [ ver, server, sch, arch, pkgs, last, active ]
 
 		return table
 

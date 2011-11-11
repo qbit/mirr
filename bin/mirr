@@ -54,7 +54,7 @@ App.get '/', ( req, res ) ->
     for m of list
       o =
         release: m
-        url: list[m].url
+        server: list[m].server
         schedule: list[m].schedule
         arch: list[m].arch
         packages: list[m].packages
