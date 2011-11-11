@@ -45,11 +45,10 @@ class Mirr
 		head =
 			[ 'Release', 'URL', 'Sched', 'Arch(es)', 'Packages', 'Updated', 'Active' ]
 
-		# colWidths=
-		#  	[ 16, 21, 25, 20, 10, 10, 10 ]
+		colWidths=
+		 	[ 16, 21, 15, 25, 10, 10, 10 ]
 
-		# table = new Table { head: head, colWidths: colWidths }
-		table = new Table { head: head }
+		table = new Table { head: head, colWidths: colWidths }
 
 		obj = JSON.parse obj.toString()
 		for ver of obj
