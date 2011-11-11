@@ -1,76 +1,80 @@
 Nconf = require 'nconf'
 Fs = require 'fs'
+Cron = require 'cron'
 Colors = require 'colors'
 Table = require 'cli-table'
 
 class Mirr
-	constructor: ( ) ->
-		@version = "0.1.0"
-		@config = "#{__dirname}/../db/mirr.json"
-		@nconf = Nconf
-		@nconf.add 'file', { file: @config }
+    constructor: ( ) ->
+        @version = "0.1.0"
+        @config = "#{__dirname}/../db/mirr.json"
+        @nconf = Nconf
+        @nconf.add 'file', { file: @config }
 
-  log: ( msg ) ->
-    console.log msg
+    log: ( msg ) ->
+        console.log msg
 
-	_save: ->
-		@nconf.save ( err ) =>
-		Fs.readFile @config, ( err, data ) =>
-				console.dir JSON.parse data.toString()
+    _save: ->
+        @nconf.save ( err ) =>
+            Fs.readFile @config, ( err, data ) =>
+                throw err if err
 
-	_set: ( key, val ) ->
-		@nconf.set( key, val )
+    _set: ( key, val ) ->
+        @nconf.set( key, val )
 
-	add: ( str ) ->
-		parts = str.split ':'
-		arch = parts[2].split ','
+    reload: ( ) ->
+        @_set( 'cmd', 'reload' )
+        @_save()
 
-		@_set "#{parts[0]}:server", parts[1]
-		@_set "#{parts[0]}:arch", arch
-		@_set "#{parts[0]}:packages", parts[3]
-		@_set "#{parts[0]}:lastupdate", 'never'
-		@_set "#{parts[0]}:schedule", '30,1,*,*,*'
-		@_set "#{parts[0]}:active", parts[4]
+    dump: ( fn ) ->
+        Fs.readFile @config, ( err, data ) ->
+            fn( err, JSON.parse data.toString() )
 
-		@_save()
+    add: ( str ) ->
+        parts = str.split ':'
+        arch = parts[2].split ','
 
-	_rm: ( key ) ->
-		@nconf.clear( key )
-		@_save()
+        @_set "#{parts[0]}:server", parts[1]
+        @_set "#{parts[0]}:arch", arch
+        @_set "#{parts[0]}:packages", parts[3]
+        @_set "#{parts[0]}:lastupdate", 'never'
+        @_set "#{parts[0]}:schedule", '30,1,*,*,*'
+        @_set "#{parts[0]}:active", parts[4]
 
-	rm: ( key ) ->
-		@_rm key
+        @_save()
 
-	pretty: ( obj ) ->
-		head =
-			[ 'Release', 'Server', 'Sched', 'Arch(es)', 'Packages', 'Updated', 'Active' ]
+    rmKey: ( key ) ->
+        @nconf.clear( key )
+        @_save()
 
-		colWidths=
-		 	[ 16, 21, 15, 25, 10, 10, 10 ]
+    _restart: ( jobs, fn ) ->
+        for j in jobs
+            j.stop()
+            delete j
+        fn()
 
-		table = new Table { head: head, colWidths: colWidths }
+    pretty: ( obj ) ->
+        head =
+            [ 'Release', 'Server', 'Sched', 'Arch(es)', 'Packages', 'Updated', 'Active' ]
 
-		obj = JSON.parse obj.toString()
-		for ver of obj
+        colWidths=
+            [ 16, 21, 15, 25, 10, 10, 10 ]
 
-			server = obj[ver].server
-			arch = obj[ver].arch.join( ',' )
-			sch = obj[ver].schedule
-			pkgs = obj[ver].packages
-			last = obj[ver].lastupdate
-			active = obj[ver].active
+        table = new Table { head: head, colWidths: colWidths }
 
-			table.push [ ver, server, sch, arch, pkgs, last, active ]
+        for ver of obj
+            server = obj[ver].server
+            arch = obj[ver].arch.join( ',' )
+            sch = obj[ver].schedule
+            pkgs = obj[ver].packages
+            last = obj[ver].lastupdate
+            active = obj[ver].active
 
-		return table
+            table.push [ ver, server, sch, arch, pkgs, last, active ]
 
-	dump: ( fn ) ->
-		Fs.readFile @config, ( err, data ) ->
-			fn( err, data )
+        return table
 
-	rand: ( max ) ->
-		return Math.floor( Math.random() * max )
+    rand: ( max ) ->
+        return Math.floor( Math.random() * max )
 
 exports.Mirr = Mirr
-
-# vim:ft=coffee ts=2 sw=2 et :

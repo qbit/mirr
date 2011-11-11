@@ -10,6 +10,7 @@ Switches = [
   [ "-a", "--add STRING",      "Add a mirror to monitor. Example '-a 5.0:ftp.openbsd.org:i386,amd64:true:true'" ],
   [ "-d", "--delete RELEASE",   "Remove a mirror ( and all associated data )" ],
   [ "-l", "--list",     "List mirrors" ],
+  [ "-r", "--reload",     "Reloads all the current cronjobs" ],
   [ "-v", "--version",     "Version" ]
 ]
 
@@ -31,7 +32,11 @@ Parser.on 'list', ( opt, val ) ->
     process.exit 0
 
 Parser.on 'delete', ( opt, value ) ->
-  mirr.rm value
+  mirr.rmKey value
+  process.exit 0
+
+Parser.on 'reload', ( opt, value ) ->
+  mirr.reload()
   process.exit 0
 
 Parser.on 'add', ( opt, value ) ->

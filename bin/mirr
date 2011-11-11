@@ -38,18 +38,38 @@ Parser.on 'port', ( opt, val ) ->
 
 Parser.parse process.argv or process.ARGV
 
-mirr.dump ( err, list ) ->
-  list = JSON.parse list.toString()
-  for m of list
-    j = new Cron.CronJob list[m].schedule.replace( /,/, ' ' ), ( ) ->
-      console.log "Updating #{this.jobName}"
-    j.jobName = m
-    j.jobInfo = list[m]
-    Jobs.push j
+createJob = ( name, j ) ->
+    nj = new Cron.CronJob j.schedule.replace( ',', ' ' ), ( ) ->
+        console.log "Updating #{this.jobName}"
+    nj.jobName = name
+    nj.jobInfo = j
+    Jobs.push nj
+
+startJobs = () ->
+    mirr.dump ( err, list ) ->
+        for m of list
+            if m isnt 'cmd'
+                console.log "Setting #{m} to #{list[m].schedule}"
+                createJob( m, list[m] )
+                # j = new Cron.CronJob list[m].schedule.replace( /,/, ' ' ), ( ) ->
+                #     console.log "Updating #{this.jobName}"
+                # j.jobName = m
+                # j.jobInfo = list[m]
+                # Jobs.push j
+
+ControlJob = new Cron.CronJob '* * * * * *', ( ) ->
+  mirr.dump ( err, list ) ->
+    for m of list
+      if m is 'cmd' and list[m] is 'reload'
+        mirr.log 'Reloading jobs'
+        mirr.rmKey( 'cmd' )
+        mirr._restart Jobs, () ->
+          startJobs()
+
+startJobs()
 
 App.get '/', ( req, res ) ->
   mirr.dump ( err, list ) ->
-    list = JSON.parse list.toString()
     mirrors = []
     for m of list
       o =
