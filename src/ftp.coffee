@@ -5,11 +5,13 @@ Path = require 'path'
 class MirrFtp
 	constructor: ( @server, @login, @pass, @opts, @fn ) ->
 
+		@opts = @opts or {}
+
 		@conn = new Ftp( { host: @server, debug: ( msg ) =>
 			console.log "FTP VERBOSE: #{msg}" if @opts.ftp_debug
 		})
 
-		@pending = []
+		@filePending = []
 		@maxConn = @opts.maxConn || 1
 		@finished = null
 		@currentConn = 0
@@ -38,9 +40,9 @@ class MirrFtp
 						Fs.mkdir previousPath, 0755
 
 	processPending: =>
-		if @pending.length > 0
-			@log 'QUEUE', "jobs pending: #{@pending.length}" if @opts.queue_debug
-			fn = @pending.shift()
+		if @filePending.length > 0
+			@log 'QUEUE', "jobs pending: #{@filePending.length}" if @opts.queue_debug
+			fn = @filePending.shift()
 			@currentConn++
 			fn ( =>
 				@currentConn--
@@ -58,14 +60,20 @@ class MirrFtp
 				process.nextTick( @processPending )
 			)
 		else
-			@pending.push fn
+			@filePending.push fn
 
 	dateCompare: ( date1, date2 ) ->
 		return true if date1 > date2
 		return false if date1 < date2
 
 
-	getNewFiles: ( path, date ) =>
+	getNewFiles: ( path, date, cb ) =>
+		date = new Date() if date is 'never'
+		if date is 'never'
+			# set the date back a week
+			d = new Date().getTime()
+			date = new Date( d - 60480000 ).toGMTString()
+
 		dstPath = __dirname + '/public' + path
 		dstPath = dstPath.replace( /\/src|\/lib/, '' )
 		@mkdir( dstPath )
@@ -86,7 +94,8 @@ class MirrFtp
 						if @dateCompare fileDate, date && entry.type == '-'
 							@log "FTP", "need to get #{entry.name}" if @opts.debug
 							fo = {
-								name:  path + '/' + entry.name,
+								name: path + '/' + entry.name,
+								date: fileDate,
 								dst: dstPath + '/' + entry.name
 							}
 
@@ -99,11 +108,10 @@ class MirrFtp
 								if @currentConn == 0
 									@finished = ( ) =>
 										@conn.end()
-										@fn( files )
+										cb( files )
 
 								@connLimit ( done ) =>
-									@conn.get file.name, ( e, stream, tater ) =>
-										console.log tater
+									@conn.get file.name, ( e, stream ) =>
 										throw e if e
 										if stream
 											@log 'FTP', "fetching: #{file.name}" if @opts.debug

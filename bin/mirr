@@ -22,6 +22,9 @@ Jobs = []
 
 Switches = [
   [ "-h", "--help",     "Display help info." ],
+  [ "-d", "--debug",     "Show debug information." ],
+  [ "-f", "--ftpdebug",     "Show ftp debug information ( very verbose )." ],
+  [ "-q", "--queuedebug",     "Show ftp queueing debug information." ],
   [ "-p", "--port PORT",     "Port number to run the web server on. ( default 1337 )" ]
   [ "-n", "--noserver", "Disable webserver entirely. This will require another server." ]
 ]
@@ -36,11 +39,34 @@ Parser.on 'help', ( opt, val ) ->
 Parser.on 'port', ( opt, val ) ->
   Options.port = val
 
+Parser.on 'debug', ( opt, val ) ->
+  Options.debug = true
+
+Parser.on 'ftpdebug', ( opt, val ) ->
+  Options.ftpdebug = true
+
+Parser.on 'queuedebug', ( opt, val ) ->
+  Options.queuedebug = true
+
 Parser.parse process.argv or process.ARGV
 
 createJob = ( name, j ) ->
-    nj = new Cron.CronJob j.schedule.replace( ',', ' ' ), ( ) ->
+    nj = new Cron.CronJob j.schedule, ( ) ->
         console.log "Updating #{this.jobName}"
+        opts = {
+          queue_debug: Options.queuedebug
+          debug: Options.debug
+          ftp_debug: Options.ftpdebug
+        }
+        ftp = new MirrFtp.MirrFtp( j.server, 'anonymous', 'anonymous', opts )
+        for arch in j.arch
+          path = "/pub/OpenBSD/#{name}/#{arch}/"
+
+          ftp.getNewFiles path, j.lastupdate, ( list ) ->
+              console.log list
+              for file in list
+                console.log list
+
     nj.jobName = name
     nj.jobInfo = j
     Jobs.push nj
@@ -51,11 +77,6 @@ startJobs = () ->
             if m isnt 'cmd'
                 console.log "Setting #{m} to #{list[m].schedule}"
                 createJob( m, list[m] )
-                # j = new Cron.CronJob list[m].schedule.replace( /,/, ' ' ), ( ) ->
-                #     console.log "Updating #{this.jobName}"
-                # j.jobName = m
-                # j.jobInfo = list[m]
-                # Jobs.push j
 
 ControlJob = new Cron.CronJob '* * * * * *', ( ) ->
   mirr.dump ( err, list ) ->
